@@ -66,7 +66,7 @@ const addTodo = () => {
     
     const todoObject = composeTodoObject(textTodo, timeStamp, false);
     todo[TODO_ITEMID] = todoObject.id;
-    todo.push(todoObject);
+    todos.push(todoObject);
    
     uncompletedListTODOId.append(todo);
 
