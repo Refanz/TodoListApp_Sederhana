@@ -1,5 +1,6 @@
 const UNCOMPLETED_LIST_TODO_ID = "todos";
 const COMPLETED_LIST_TODO_ID = "completed-todos";
+const TODO_ITEMID = "itemId";
 
 const makeTodo = (data, timeStamp, isCompleted) => {
     const textTitle = document.createElement("h2");
@@ -61,9 +62,15 @@ const addTodo = () => {
     const textTodo = document.getElementById("title").value;
     const timeStamp = document.getElementById("date").value;
 
-    const todo = makeTodo(textTodo, timeStamp);
+    const todo = makeTodo(textTodo, timeStamp, false);
+    
+    const todoObject = composeTodoObject(textTodo, timeStamp, false);
+    todo[TODO_ITEMID] = todoObject.id;
+    todo.push(todoObject);
    
     uncompletedListTODOId.append(todo);
+
+    updateDataToStorage();
 }
 
 const addTaskToCompleted = (taskElement) => {
@@ -72,13 +79,24 @@ const addTaskToCompleted = (taskElement) => {
     const taskTimeStamp = taskElement.querySelector(".inner > p").innerText;
 
     const newTodo = makeTodo(taskTitle, taskTimeStamp, true);
+    const todo = findTodo(taskElement[TODO_ITEMID]);
+    todo.isCompleted = true;
+    newTodo[TODO_ITEMID] = todo.id;
     
     listCompleted.append(newTodo);
     taskElement.remove();
+
+    updateDataToStorage();
 }
 
 const removeTaskFromCompleted = (taskElement) => {
+
+    const todoPosition = findTodoIndex(taskElement[TODO_ITEMID]);
+    todos.splice(todoPosition, 1);
+
     taskElement.remove();
+
+    updateDataToStorage();
 }
 
 const undoTaskFromCompleted = (taskElement) => {
@@ -86,8 +104,14 @@ const undoTaskFromCompleted = (taskElement) => {
     const taskTitle = taskElement.querySelector(".inner > h2").innerText;
     const taskTimeStamp = taskElement.querySelector(".inner > p").innerText;
     const newTodo = makeTodo(taskTitle, taskTimeStamp, false);
+    
+    const todo = findTodo(taskElement[TODO_ITEMID]);
+    todo.isCompleted = false;
+    newTodo[TODO_ITEMID] = todo.id;
 
     listUncompleted.append(newTodo);
     taskElement.remove();
+
+    updateDataToStorage();
 
 }
